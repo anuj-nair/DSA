@@ -3,13 +3,6 @@ Given the root of a binary tree, return its maximum depth.
 
 A binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
 """
-# Python3 program to find the maximum depth of tree
-
-# A binary tree node
-
-# Compute the "maxDepth" of a tree -- the number of nodes
-# along the longest path from the root node down to the
-# farthest leaf node
 
 
 class Node:
@@ -19,22 +12,77 @@ class Node:
         self.right = None
 
 
-def treefy(m, root):
-    m.left = Node(root.pop())
-    m.right = Node(root.pop())
+class Queue:
+    def __init__(self):
+        self.items = []
+
+    def is_empty(self):
+        #        return len(self.items) == 0
+        return not self.items
+
+    def enqueue(self, item):
+        self.items.append(item)
+
+    def dequeue(self):
+        self.items.reverse()
+        p = self.items.pop()
+        self.items.reverse()
+        return p
+
+    def size(self):
+        return len(self.items)
+
+    def peek(self):
+        return self.items[0]
+
+    def __str__(self):
+        return str(self.items)
 
 
 class Solution:
-    def maxDepth(self, root):
-        if root is None:
-            return -1
+    def __init__(self):
+        self.node = Node(None)
+        self.q = Queue()
+        self.list = []
+
+    def nodify(self):
+        if self.q.is_empty() or not self.list:
+            return
         else:
-            node = m = Node(root.pop())
-            while root == []:
-                treefy(m, root)
-                m = m.lefy(m)
-                treefy(m, root)
-                m = m.right
+            node = self.q.dequeue()
+            data = self.list.pop()
+            if data is not None:
+                node.left = Node(data)
+                if not self.list:
+                    return
+                self.q.enqueue(node.left)
+            data = self.list.pop()
+            if data is not None:
+                node.right = Node(data)
+                if node.data is not None:
+                    self.q.enqueue(node.right)
+            self.nodify()
+
+    def treeify(self, root):
+        r = 0
+        self.list = list(reversed(root))
+        data = self.list.pop()
+        if data is not null:
+            self.node = Node(data)
+            r = self.node
+            self.q.enqueue(r)
+            self.nodify()
+        return r
+
+    def maxDepth(self, node):
+        if not node:
+            return 0
+        else:
+            if type(node) == list:
+                node = self.treeify(node)
+
+            if node == 0:
+                return node
             # Compute the depth of each subtree
             lDepth = self.maxDepth(node.left)
             rDepth = self.maxDepth(node.right)
@@ -45,15 +93,17 @@ class Solution:
             else:
                 return rDepth+1
 
+    def print_tree(self, node):
+        try:
+            self.print_tree(node=node.left)
+            print(node.data, end=' ')
+            self.print_tree(node=node.right)
+        except AttributeError:
+            return
 
-root = Node(1)
-root.left = Node(2)
-root.right = Node(3)
-root.left.left = Node(4)
-root.left.right = Node(5)
 
-root = [1, 3, 4, 1, 2, 3, 4]
-
+null = None
+root = [3, 9, 20, null, null, 15, 7]
 sol = Solution()
 rs = sol.maxDepth(root)
 
